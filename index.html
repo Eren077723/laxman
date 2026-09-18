@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Explorer - Units & Measurement | Laxman's Project</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Solar System Background */
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        /* Header Section */
+        header {
+            background: rgba(10, 10, 35, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 3px solid #00ffff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: slideDown 1s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.5); }
+        }
+
+        .student-info {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            color: #00ffff;
+            animation: fadeIn 2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(20, 20, 50, 0.8);
+            padding: 1rem;
+            position: sticky;
+            top: 150px;
+            z-index: 99;
+            backdrop-filter: blur(5px);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #00ffff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 0.5rem 1.5rem;
+            border: 2px solid #00ffff;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        nav a:hover {
+            background: #00ffff;
+            color: #000;
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 0 20px #00ffff;
+        }
+
+        /* Main Content Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* Section Styling */
+        section {
+            margin: 4rem 0;
+            padding: 3rem;
+            background: rgba(30, 30, 60, 0.7);
+            border-radius: 20px;
+            border: 2px solid #00ffff;
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            color: #00ffff;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            color: #ff00ff;
+            margin: 2rem 0 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        p, li {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin: 1rem 0;
+            position: relative;
+            z-index: 1;
+            color: #e0e0e0;
+        }
+
+        /* 3D Model Container */
+        .model-container {
+            width: 100%;
+            height: 400px;
+            margin: 2rem 0;
+            border: 3px solid #ff00ff;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .model-3d {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #00ffff;
+        }
+
+        /* Animation Cards */
+        .animation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .animation-card {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
+            border: 2px solid #00ffff;
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animation-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.5);
+            border-color: #ff00ff;
+        }
+
+        .animation-card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .animation-card:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Video Container */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            margin: 2rem 0;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 3px solid #ff00ff;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Image Gallery */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            border: 2px solid #00ffff;
+            transition: all 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Interactive Formula Box */
+        .formula-box {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.2), rgba(0, 255, 255, 0.2));
+            border: 3px solid #ffff00;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            font-size: 1.3rem;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Interactive Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1.5rem;
+            text-align: left;
+            border: 1px solid #00ffff;
+        }
+
+        th {
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+            color: #000;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        tr:hover {
+            background: rgba(0, 255, 255, 0.1);
+            transform: scale(1.01);
+        }
+
+        /* Animated Icons */
+        .icon {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            margin: 0.5rem;
+            animation: rotate 3s infinite linear;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(10, 10, 35, 0.9);
+            padding: 3rem;
+            text-align: center;
+            border-top: 3px solid #00ffff;
+            margin-top: 4rem;
+        }
+
+        footer h3 {
+            color: #00ffff;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Scroll Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #00ffff, #ff00ff, #ffff00);
+            z-index: 1000;
+            transition: width 0.1s;
+        }
+
+        /* Loading Animation */
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #00ffff;
+            border-top: 5px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            color: #ffff00;
+            cursor: help;
+            border-bottom: 2px dotted #ffff00;
+        }
+
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            white-space: nowrap;
+            z-index: 1000;
+        }
+
+        /* Floating Elements */
+        .float-element {
+            animation: floatUpDown 3s ease-in-out infinite;
+        }
+
+        @keyframes floatUpDown {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(255, 255, 0, 0.2), rgba(255, 0, 255, 0.2));
+            border-left: 5px solid #ffff00;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 10px;
+        }
+
+        /* Button Styles */
+        .btn {
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1rem 0.5rem;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.8rem; }
+            nav ul { flex-direction: column; gap: 1rem; }
+            .animation-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #00ffff, #ff00ff);
+            border-radius: 10px;
+        }
+
+        /* Parallax Planets */
+        .parallax-planet {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            transition: transform 0.1s ease-out;
+        }
+
+        .planet-1 {
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle at 30% 30%, #ff6b6b, #8b0000);
+            top: 10%;
+            right: 10%;
+            box-shadow: 0 0 50px rgba(255, 107, 107, 0.5);
+        }
+
+        .planet-2 {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle at 30% 30%, #4ecdc4, #1a535c);
+            top: 50%;
+            left: 5%;
+            box-shadow: 0 0 60px rgba(78, 205, 196, 0.5);
+        }
+
+        .planet-3 {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #ffe66d, #ff6b35);
+            top: 70%;
+            right: 15%;
+            box-shadow: 0 0 40px rgba(255, 230, 109, 0.5);
+        }
+
+        /* Animated Number Counter */
+        .counter {
+            font-size: 3rem;
+            color: #00ffff;
+            font-weight: bold;
+            text-align: center;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Animated Space Background -->
+    <div class="space-background">
+        <div class="stars" id="stars"></div>
+        <div class="parallax-planet planet-1 planet"></div>
+        <div class="parallax-planet planet-2 planet"></div>
+        <div class="parallax-planet planet-3 planet"></div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <h1>⚛️ PHYSICS EXPLORER ⚛️</h1>
+        <div class="student-info">
+            <p>👨‍🎓 <strong>Project By:</strong> Laxman</p>
+            <p>💻 <strong>Created By:</strong> Laxman | 📖 <strong>Subject:</strong> Physics - Class 11</p>
+            <p>📝 <strong>Chapter:</strong> Units and Measurement</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#intro">Introduction</a></li>
+            <li><a href="#physical-quantities">Physical Quantities</a></li>
+            <li><a href="#si-units">SI Units</a></li>
+            <li><a href="#dimensional-analysis">Dimensional Analysis</a></li>
+            <li><a href="#animations">Animations</a></li>
+            <li><a href="#resources">Resources</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        
+        <!-- Introduction Section -->
+        <section id="intro">
+            <h2>🌟 Introduction to Units and Measurement</h2>
+            <p>Welcome to this comprehensive exploration of <strong>Physical Quantities, Systems of Units, and Dimensional Analysis</strong>. This chapter forms the foundation of physics, enabling us to quantify and understand the physical world around us.</p>
+            
+            <div class="highlight-box float-element">
+                <h3>🎯 Why Study Units and Measurement?</h3>
+                <p>Measurement is the foundation of experimental science and technology. The advancement of physics has always been closely tied to our ability to measure physical quantities with greater precision and accuracy.</p>
+            </div>
+
+            <div class="model-container">
+                <div class="model-3d" id="model1">
+                    <div style="text-align: center;">
+                        <div class="loader"></div>
+                        <p>3D Model: Measurement Instruments</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Physical Quantities Section -->
+        <section id="physical-quantities">
+            <h2>📊 Physical Quantities</h2>
+            
+            <h3>🔹 What are Physical Quantities?</h3>
+            <p>A <tooltip class="tooltip" data-tooltip="A quantity that can be measured">physical quantity</tooltip> is a property of a material or system that can be quantified by measurement. It consists of two parts:</p>
+            <ul>
+                <li><strong>Numerical Value (Magnitude)</strong> - How much?</li>
+                <li><strong>Unit</strong> - In what measure?</li>
+            </ul>
+
+            <div class="formula-box">
+                <strong>Physical Quantity = Numerical Value × Unit</strong><br>
+                Example: Length = 5 meters (5 is magnitude, meter is unit)
+            </div>
+
+            <h3>🔹 Types of Physical Quantities</h3>
+            
+            <div class="animation-grid">
+                <div class="animation-card">
+                    <h3>1️⃣ Fundamental Quantities</h3>
+                    <p><strong>Definition:</strong> Quantities that are independent and cannot be derived from other quantities.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">
+                            <div class="counter" data-target="7">0</div>
+                        </div>
+                    </div>
+                    <p><strong>The Seven Fundamental Quantities:</strong></p>
+                    <ul>
+                        <li>📏 <strong>Length</strong> - meter (m)</li>
+                        <li>⚖️ <strong>Mass</strong> - kilogram (kg)</li>
+                        <li>⏱️ <strong>Time</strong> - second (s)</li>
+                        <li>⚡ <strong>Electric Current</strong> - ampere (A)</li>
+                        <li>🌡️ <strong>Temperature</strong> - kelvin (K)</li>
+                        <li>💡 <strong>Luminous Intensity</strong> - candela (cd)</li>
+                        <li>🧪 <strong>Amount of Substance</strong> - mole (mol)</li>
+                    </ul>
+                </div>
+
+                <div class="animation-card">
+                    <h3>2️⃣ Derived Quantities</h3>
+                    <p><strong>Definition:</strong> Quantities derived from fundamental quantities through mathematical relations.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">
+                            <p style="font-size: 3rem;">∞</p>
+                        </div>
+                    </div>
+                    <p><strong>Common Examples:</strong></p>
+                    <ul>
+                        <li>🏃 <strong>Velocity</strong> = Length / Time (m/s)</li>
+                        <li>⚡ <strong>Acceleration</strong> = Velocity / Time (m/s²)</li>
+                        <li>💪 <strong>Force</strong> = Mass × Acceleration (N)</li>
+                        <li>⚙️ <strong>Work</strong> = Force × Distance (J)</li>
+                        <li>🔋 <strong>Power</strong> = Work / Time (W)</li>
+                        <li>📐 <strong>Area</strong> = Length × Length (m²)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="model-container">
+                <div class="model-3d" id="model2">
+                    <div style="text-align: center;">
+                        <div class="loader"></div>
+                        <p>3D Model: Fundamental vs Derived Quantities</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>🔹 Scalars and Vectors</h3>
+            <div class="animation-grid">
+                <div class="animation-card">
+                    <h3>📊 Scalar Quantities</h3>
+                    <p>Quantities with <strong>magnitude only</strong></p>
+                    <ul>
+                        <li>Mass, Temperature, Speed</li>
+                        <li>Distance, Energy, Work</li>
+                        <li>Time, Volume, Density</li>
+                    </ul>
+                    <div class="formula-box" style="font-size: 1rem;">
+                        Example: Temperature = 25°C
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎯 Vector Quantities</h3>
+                    <p>Quantities with <strong>magnitude and direction</strong></p>
+                    <ul>
+                        <li>Displacement, Velocity, Acceleration</li>
+                        <li>Force, Momentum, Torque</li>
+                        <li>Electric Field, Magnetic Field</li>
+                    </ul>
+                    <div class="formula-box" style="font-size: 1rem;">
+                        Example: Velocity = 50 m/s North
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SI Units Section -->
+        <section id="si-units">
+            <h2>🌍 International System of Units (SI Units)</h2>
+            
+            <p>The <strong>SI</strong> (Système International d'Unités) is the modern form of the metric system and is the most widely used system of measurement worldwide.</p>
+
+            <div class="highlight-box">
+                <h3>🎯 History</h3>
+                <p>The SI system was established in 1960 at the 11th General Conference on Weights and Measures (CGPM) to provide a universal standard for measurements.</p>
+            </div>
+
+            <h3>📋 SI Base Units Table</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Physical Quantity</th>
+                        <th>SI Unit</th>
+                        <th>Symbol</th>
+                        <th>Definition</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Length</td>
+                        <td>Meter</td>
+                        <td>m</td>
+                        <td>Distance traveled by light in vacuum in 1/299,792,458 seconds</td>
+                    </tr>
+                    <tr>
+                        <td>Mass</td>
+                        <td>Kilogram</td>
+                        <td>kg</td>
+                        <td>Defined by the Planck constant (h = 6.62607015 × 10⁻³⁴ J·s)</td>
+                    </tr>
+                    <tr>
+                        <td>Time</td>
+                        <td>Second</td>
+                        <td>s</td>
+                        <td>9,192,631,770 periods of radiation of cesium-133 atom</td>
+                    </tr>
+                    <tr>
+                        <td>Electric Current</td>
+                        <td>Ampere</td>
+                        <td>A</td>
+                        <td>Defined by elementary charge (e = 1.602176634 × 10⁻¹⁹ C)</td>
+                    </tr>
+                    <tr>
+                        <td>Temperature</td>
+                        <td>Kelvin</td>
+                        <td>K</td>
+                        <td>Defined by Boltzmann constant (k = 1.380649 × 10⁻²³ J/K)</td>
+                    </tr>
+                    <tr>
+                        <td>Luminous Intensity</td>
+                        <td>Candela</td>
+                        <td>cd</td>
+                        <td>Luminous intensity of source emitting monochromatic radiation</td>
+                    </tr>
+                    <tr>
+                        <td>Amount of Substance</td>
+                        <td>Mole</td>
+                        <td>mol</td>
+                        <td>Defined by Avogadro constant (NA = 6.02214076 × 10²³ mol⁻¹)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="model-container">
+                <div class="model-3d" id="model3">
+                    <div style="text-align: center;">
+                        <div class="loader"></div>
+                        <p>3D Model: SI Base Units Visualization</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>📊 SI Prefixes</h3>
+            <p>SI prefixes are used to form decimal multiples and submultiples of SI units:</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Prefix</th>
+                        <th>Symbol</th>
+                        <th>Factor</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>tera</td>
+                        <td>T</td>
+                        <td>10¹²</td>
+                        <td>1 Tm = 10¹² m</td>
+                    </tr>
+                    <tr>
+                        <td>giga</td>
+                        <td>G</td>
+                        <td>10⁹</td>
+                        <td>1 GHz = 10⁹ Hz</td>
+                    </tr>
+                    <tr>
+                        <td>mega</td>
+                        <td>M</td>
+                        <td>10⁶</td>
+                        <td>1 MW = 10⁶ W</td>
+                    </tr>
+                    <tr>
+                        <td>kilo</td>
+                        <td>k</td>
+                        <td>10³</td>
+                        <td>1 km = 10³ m</td>
+                    </tr>
+                    <tr>
+                        <td>hecto</td>
+                        <td>h</td>
+                        <td>10²</td>
+                        <td>1 hm = 10² m</td>
+                    </tr>
+                    <tr>
+                        <td>deca</td>
+                        <td>da</td>
+                        <td>10¹</td>
+                        <td>1 dam = 10 m</td>
+                    </tr>
+                    <tr>
+                        <td>deci</td>
+                        <td>d</td>
+                        <td>10⁻¹</td>
+                        <td>1 dm = 10⁻¹ m</td>
+                    </tr>
+                    <tr>
+                        <td>centi</td>
+                        <td>c</td>
+                        <td>10⁻²</td>
+                        <td>1 cm = 10⁻² m</td>
+                    </tr>
+                    <tr>
+                        <td>milli</td>
+                        <td>m</td>
+                        <td>10⁻³</td>
+                        <td>1 mm = 10⁻³ m</td>
+                    </tr>
+                    <tr>
+                        <td>micro</td>
+                        <td>μ</td>
+                        <td>10⁻⁶</td>
+                        <td>1 μm = 10⁻⁶ m</td>
+                    </tr>
+                    <tr>
+                        <td>nano</td>
+                        <td>n</td>
+                        <td>10⁻⁹</td>
+                        <td>1 nm = 10⁻⁹ m</td>
+                    </tr>
+                    <tr>
+                        <td>pico</td>
+                        <td>p</td>
+                        <td>10⁻¹²</td>
+                        <td>1 pm = 10⁻¹² m</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>🔄 Other Systems of Units</h3>
+            <div class="animation-grid">
+                <div class="animation-card">
+                    <h3>CGS System</h3>
+                    <p><strong>Centimeter-Gram-Second</strong></p>
+                    <ul>
+                        <li>Length: Centimeter (cm)</li>
+                        <li>Mass: Gram (g)</li>
+                        <li>Time: Second (s)</li>
+                    </ul>
+                </div>
+
+                <div class="animation-card">
+                    <h3>FPS System</h3>
+                    <p><strong>Foot-Pound-Second</strong></p>
+                    <ul>
+                        <li>Length: Foot (ft)</li>
+                        <li>Mass: Pound (lb)</li>
+                        <li>Time: Second (s)</li>
+                    </ul>
+                </div>
+
+                <div class="animation-card">
+                    <h3>MKS System</h3>
+                    <p><strong>Meter-Kilogram-Second</strong></p>
+                    <ul>
+                        <li>Length: Meter (m)</li>
+                        <li>Mass: Kilogram (kg)</li>
+                        <li>Time: Second (s)</li>
+                    </ul>
+                    <p><em>This became the basis for SI units</em></p>
+                </div>
+            </div>
+
+            <div class="model-container">
+                <div class="model-3d" id="model4">
+                    <div style="text-align: center;">
+                        <div class="loader"></div>
+                        <p>3D Model: Unit Systems Comparison</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dimensional Analysis Section -->
+        <section id="dimensional-analysis">
+            <h2>🔬 Dimensional Analysis</h2>
+            
+            <div class="highlight-box">
+                <h3>📖 What is Dimensional Analysis?</h3>
+                <p>Dimensional analysis is a powerful mathematical technique used in physics to check the correctness of equations, derive relationships between physical quantities, and convert units from one system to another.</p>
+            </div>
+
+            <h3>🔹 Dimensions of Physical Quantities</h3>
+            <p>The <strong>dimension</strong> of a physical quantity represents the nature of that quantity and how it depends on the base quantities.</p>
+
+            <div class="formula-box">
+                <strong>Standard Notation:</strong><br>
+                [M] = Mass, [L] = Length, [T] = Time<br>
+                [I] = Current, [K] = Temperature, [mol] = Amount, [cd] = Luminous Intensity
+            </div>
+
+            <h3>📊 Dimensions of Common Physical Quantities</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Physical Quantity</th>
+                        <th>Formula</th>
+                        <th>Dimensional Formula</th>
+                        <th>SI Unit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Area</td>
+                        <td>Length × Width</td>
+                        <td>[M⁰L²T⁰]</td>
+                        <td>m²</td>
+                    </tr>
+                    <tr>
+                        <td>Volume</td>
+                        <td>Length × Width × Height</td>
+                        <td>[M⁰L³T⁰]</td>
+                        <td>m³</td>
+                    </tr>
+                    <tr>
+                        <td>Density</td>
+                        <td>Mass / Volume</td>
+                        <td>[ML⁻³T⁰]</td>
+                        <td>kg/m³</td>
+                    </tr>
+                    <tr>
+                        <td>Velocity</td>
+                        <td>Displacement / Time</td>
+                        <td>[M⁰LT⁻¹]</td>
+                        <td>m/s</td>
+                    </tr>
+                    <tr>
+                        <td>Acceleration</td>
+                        <td>Velocity / Time</td>
+                        <td>[M⁰LT⁻²]</td>
+                        <td>m/s²</td>
+                    </tr>
+                    <tr>
+                        <td>Force</td>
+                        <td>Mass × Acceleration</td>
+                        <td>[MLT⁻²]</td>
+                        <td>N (Newton)</td>
+                    </tr>
+                    <tr>
+                        <td>Momentum</td>
+                        <td>Mass × Velocity</td>
+                        <td>[MLT⁻¹]</td>
+                        <td>kg⋅m/s</td>
+                    </tr>
+                    <tr>
+                        <td>Energy/Work</td>
+                        <td>Force × Distance</td>
+                        <td>[ML²T⁻²]</td>
+                        <td>J (Joule)</td>
+                    </tr>
+                    <tr>
+                        <td>Power</td>
+                        <td>Energy / Time</td>
+                        <td>[ML²T⁻³]</td>
+                        <td>W (Watt)</td>
+                    </tr>
+                    <tr>
+                        <td>Pressure</td>
+                        <td>Force / Area</td>
+                        <td>[ML⁻¹T⁻²]</td>
+                        <td>Pa (Pascal)</td>
+                    </tr>
+                    <tr>
+                        <td>Frequency</td>
+                        <td>1 / Time</td>
+                        <td>[M⁰L⁰T⁻¹]</td>
+                        <td>Hz (Hertz)</td>
+                    </tr>
+                    <tr>
+                        <td>Charge</td>
+                        <td>Current × Time</td>
+                        <td>[M⁰L⁰T¹I¹]</td>
+                        <td>C (Coulomb)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="model-container">
+                <div class="model-3d" id="model5">
+                    <div style="text-align: center;">
+                        <div class="loader"></div>
+                        <p>3D Model: Dimensional Formula Visualization</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>🎯 Applications of Dimensional Analysis</h3>
+            
+            <div class="animation-grid">
+                <div class="animation-card">
+                    <h3>1️⃣ Checking Dimensional Consistency</h3>
+                    <p>Verify if an equation is dimensionally correct by ensuring both sides have the same dimensions.</p>
+                    <div class="formula-box" style="font-size: 0.9rem;">
+                        <strong>Example:</strong> s = ut + ½at²<br>
+                        [L] = [LT⁻¹][T] + [LT⁻²][T²]<br>
+                        [L] = [L] + [L] ✓ Correct!
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>2️⃣ Deriving Relationships</h3>
+                    <p>Derive possible relationships between physical quantities using dimensional analysis.</p>
+                    <div class="formula-box" style="font-size: 0.9rem;">
+                        <strong>Example:</strong> Time period of pendulum<br>
+                        T ∝ l^a × m^b × g^c<br>
+                        T = 2π√(l/g)
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>3️⃣ Unit Conversion</h3>
+                    <p>Convert units from one system to another using dimensional formulas.</p>
+                    <div class="formula-box" style="font-size: 0.9rem;">
+                        <strong>Example:</strong><br>
+                        1 N = 1 kg⋅m/s²<br>
+                        = 10⁵ g⋅cm/s²<br>
+                        = 10⁵ dyne
+                    </div>
+                </div>
+            </div>
+
+            <h3>📝 Principle of Homogeneity</h3>
+            <div class="highlight-box">
+                <p><strong>Statement:</strong> In a correct physical equation, the dimensions of all terms on both sides must be the same.</p>
+                <p><strong>Example:</strong> In v = u + at, all three terms [v], [u], and [at] have dimensions of [LT⁻¹]</p>
+            </div>
+
+            <div class="model-container">
+                <div class="model-3d" id="model6">
+                    <div style="text-align: center;">
+                        <div class="loader"></div>
+                        <p>3D Model: Principle of Homogeneity</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>⚠️ Limitations of Dimensional Analysis</h3>
+            <ul>
+                <li>❌ Cannot determine dimensionless constants (like π, e, numerical factors)</li>
+                <li>❌ Cannot derive equations involving more than one term (e.g., s = ut + ½at²)</li>
+                <li>❌ Cannot determine whether a quantity is scalar or vector</li>
+                <li>❌ Cannot be used for trigonometric, exponential, or logarithmic functions</li>
+                <li>❌ Fails when physical quantity depends on more than three variables</li>
+            </ul>
+
+            <div class="model-container">
+                <div class="model-3d" id="model7">
+                    <div style="text-align: center;">
+                        <div class="loader"></div>
+                        <p>3D Model: Limitations Visualization</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>🔍 Worked Examples</h3>
+            
+            <div class="animation-card">
+                <h3>Example 1: Checking Dimensional Consistency</h3>
+                <p><strong>Question:</strong> Check if the equation E = mc² is dimensionally correct.</p>
+                <p><strong>Solution:</strong></p>
+                <div class="formula-box" style="font-size: 1rem; text-align: left;">
+                    LHS: Energy [E] = [ML²T⁻²]<br>
+                    RHS: [m][c²] = [M][LT⁻¹]² = [M][L²T⁻²] = [ML²T⁻²]<br>
+                    <strong>LHS = RHS ✓</strong> Dimensionally correct!
+                </div>
+            </div>
+
+            <div class="animation-card">
+                <h3>Example 2: Deriving Formula</h3>
+                <p><strong>Question:</strong> The time period T of a simple pendulum depends on length l and acceleration due to gravity g. Derive the relationship.</p>
+                <p><strong>Solution:</strong></p>
+                <div class="formula-box" style="font-size: 1rem; text-align: left;">
+                    Let T ∝ l^a × g^b<br>
+                    [M⁰L⁰T¹] = [L]^a × [LT⁻²]^b<br>
+                    [M⁰L⁰T¹] = [L^(a+b)T^(-2b)]<br>
+                    Comparing: a + b = 0, -2b = 1<br>
+                    ∴ b = -1/2, a = 1/2<br>
+                    <strong>T ∝ √(l/g)</strong>
+                </div>
+            </div>
+
+            <div class="animation-card">
+                <h3>Example 3: Unit Conversion</h3>
+                <p><strong>Question:</strong> Convert 1 joule into erg.</p>
+                <p><strong>Solution:</strong></p>
+                <div class="formula-box" style="font-size: 1rem; text-align: left;">
+                    1 J = 1 kg⋅m²⋅s⁻²<br>
+                    = (1000 g)⋅(100 cm)²⋅s⁻²<br>
+                    = 1000 × 10000 × g⋅cm²⋅s⁻²<br>
+                    <strong>= 10⁷ erg</strong>
+                </div>
+            </div>
+
+            <div class="model-container">
+                <div class="model-3d" id="model8">
+                    <div style="text-align: center;">
+                        <div class="loader"></div>
+                        <p>3D Model: Problem Solving Visualization</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 30 Animations Section -->
+        <section id="animations">
+            <h2>🎬 30 Interactive Animations - Units and Measurement</h2>
+            <p>Explore these comprehensive animated explanations of key concepts from Chapter 1!</p>
+
+            <div class="animation-grid">
+                <!-- Animations 1-10 -->
+                <div class="animation-card">
+                    <h3>🎬 Animation 1: What is Measurement?</h3>
+                    <p><strong>Explanation:</strong> Measurement is the process of comparing an unknown quantity with a known standard quantity of the same kind. This animation shows how ancient civilizations used body parts for measurement and how it evolved to standardized units.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">📏 Interactive Ruler Animation</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 2: Fundamental Quantities</h3>
+                    <p><strong>Explanation:</strong> The seven fundamental quantities (Length, Mass, Time, Current, Temperature, Luminous Intensity, Amount of Substance) are independent and cannot be derived from each other. Watch them interconnect to form all physical quantities.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">⚛️ 7 Base Units Orbiting</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 3: Derived Quantities Formation</h3>
+                    <p><strong>Explanation:</strong> See how fundamental quantities combine mathematically to create derived quantities. Example: Velocity = Length/Time, Force = Mass × Acceleration. Visual representation of mathematical derivation.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">🔗 Quantity Combination</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 4: The Meter - Definition Evolution</h3>
+                    <p><strong>Explanation:</strong> Journey through time showing how the definition of meter evolved from a metal rod to light-based definition. Shows the 1/10,000,000 of Earth's quadrant to modern light-speed definition.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">🌍 Earth to Light Beam</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 5: The Kilogram Redefinition</h3>
+                    <p><strong>Explanation:</strong> From the International Prototype Kilogram (IPK) cylinder to Planck constant-based definition. Shows the Kibble balance experiment and why we needed to change the definition.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">⚖️ Kibble Balance Animation</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 6: Atomic Clock - Second Definition</h3>
+                    <p><strong>Explanation:</strong> Inside an atomic clock showing 9,192,631,770 oscillations of Cesium-133 atom. Visualizes electromagnetic radiation transitions and precision timekeeping.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">⏱️ Cesium Atom Oscillation</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 7: SI Prefixes Scale</h3>
+                    <p><strong>Explanation:</strong> Zoom from tera (10¹²) to pico (10⁻¹²) showing real-world examples at each scale. From distances between stars to size of atoms.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">🔍 Scale Zooming</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 8: Scalar vs Vector</h3>
+                    <p><strong>Explanation:</strong> Interactive demonstration showing difference between scalar (magnitude only) and vector (magnitude + direction) quantities. Shows addition rules for both.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">➡️ Vector Arrows</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 9: Dimensional Formula Derivation</h3>
+                    <p><strong>Explanation:</strong> Step-by-step animation showing how to derive dimensional formulas for force, energy, power, and pressure from fundamental quantities.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">📐 Formula Building Blocks</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 10: Principle of Homogeneity</h3>
+                    <p><strong>Explanation:</strong> Visual proof that all terms in a physical equation must have same dimensions. Shows correct and incorrect equations with dimension checking.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">⚖️ Balance Scale</div>
+                    </div>
+                </div>
+
+                <!-- Animations 11-20 -->
+                <div class="animation-card">
+                    <h3>🎬 Animation 11: Unit Conversion Process</h3>
+                    <p><strong>Explanation:</strong> Step-by-step conversion between CGS and SI units for force (dyne to newton), energy (erg to joule), showing conversion factors.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">🔄 Conversion Flow</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 12: Significant Figures Rules</h3>
+                    <p><strong>Explanation:</strong> Interactive examples showing how to count significant figures, rules for zeros, and importance in scientific notation. Includes practice problems.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">🔢 Digit Highlighting</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 13: Accuracy vs Precision</h3>
+                    <p><strong>Explanation:</strong> Target practice analogy showing the difference between accuracy (closeness to true value) and precision (reproducibility of measurements).</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">🎯 Target Shooting</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 14: Types of Errors</h3>
+                    <p><strong>Explanation:</strong> Demonstrates systematic errors, random errors, and gross errors with real laboratory examples and how to minimize them.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">⚠️ Error Graphs</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 15: Vernier Caliper Working</h3>
+                    <p><strong>Explanation:</strong> Detailed animation of vernier caliper mechanism, least count calculation, and reading technique for measuring small lengths accurately.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">📏 Caliper Mechanism</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 16: Screw Gauge Operation</h3>
+                    <p><strong>Explanation:</strong> Inside view of screw gauge showing pitch, least count, zero error, and measurement technique for diameter measurements.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">🔩 Screw Threading</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 17: Order of Magnitude</h3>
+                    <p><strong>Explanation:</strong> Powers of 10 visualization from subatomic particles (10⁻¹⁵ m) to observable universe (10²⁶ m), showing comparative sizes.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">🌌 Scale Comparison</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 18: Dimensional Analysis - Pendulum</h3>
+                    <p><strong>Explanation:</strong> Complete derivation of pendulum time period formula T = 2π√(l/g) using dimensional analysis, showing each step algebraically.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">⏱️ Pendulum Swing</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 19: Checking Equation Correctness</h3>
+                    <p><strong>Explanation:</strong> Multiple examples of checking equations (F=ma, E=mc², PV=nRT) for dimensional consistency, highlighting correct and incorrect formulas.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">✓✗ Validation Check</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 20: Least Count Concept</h3>
+                    <p><strong>Explanation:</strong> Understanding least count as smallest measurable value for different instruments: ruler, vernier, screw gauge, with calculation methods.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">🔬 Measurement Precision</div>
+                    </div>
+                </div>
+
+                <!-- Animations 21-30 -->
+                <div class="animation-card">
+                    <h3>🎬 Animation 21: Parallax Method</h3>
+                    <p><strong>Explanation:</strong> Measuring astronomical distances using parallax angle. Shows how Earth's orbital positions help calculate distances to nearby stars.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">🌟 Star Parallax</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 22: Triangulation Method</h3>
+                    <p><strong>Explanation:</strong> Measuring heights and distances using trigonometry. Shows surveying applications and angle measurement techniques.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">📐 Triangle Formation</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 23: Radar Method</h3>
+                    <p><strong>Explanation:</strong> Using electromagnetic waves to measure distances. Shows time-of-flight calculation: d = ct/2, with radar pulse visualization.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">📡 Radar Waves</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 24: Sonar Technique</h3>
+                    <p><strong>Explanation:</strong> Measuring ocean depths using ultrasonic waves. Shows wave propagation underwater and echo reception.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">🌊 Sound Waves</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 25: Absolute vs Relative Error</h3>
+                    <p><strong>Explanation:</strong> Difference between absolute error (actual deviation) and relative/percentage error. Shows calculation with examples.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">📊 Error Bars</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 26: Combination of Errors</h3>
+                    <p><strong>Explanation:</strong> Rules for error propagation in addition, subtraction, multiplication, division, and powers. Shows mathematical derivation.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">➕➖✖️➗ Operations</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 27: Dimensional Constants</h3>
+                    <p><strong>Explanation:</strong> Physical constants with dimensions: Gravitational constant G, Planck's constant h, Boltzmann constant k. Shows their dimensional formulas.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">🔢 Constant Values</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 28: Dimensionless Quantities</h3>
+                    <p><strong>Explanation:</strong> Quantities without dimensions: angle, strain, refractive index, coefficient of friction. Shows why they're dimensionless.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">∅ Pure Numbers</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 29: Scientific Notation</h3>
+                    <p><strong>Explanation:</strong> Converting very large and very small numbers into scientific notation (a × 10ⁿ). Shows practical examples from astronomy and atomic physics.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">10ⁿ Exponent Power</div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>🎬 Animation 30: History of Measurement Systems</h3>
+                    <p><strong>Explanation:</strong> Timeline from ancient Egypt to modern SI system. Shows evolution: cubit → meter, grain → kilogram, water clock → atomic clock.</p>
+                    <div class="model-container" style="height: 200px;">
+                        <div class="model-3d">📜 Timeline Scroll</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="model-container">
+                <div class="model-3d" id="model9">
+                    <div style="text-align: center;">
+                        <div class="loader"></div>
+                        <p>3D Model: Complete Animation Collection</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Additional 3D Models Section -->
+        <section>
+            <h2>🎨 Additional 3D Models & Visualizations</h2>
+            
+            <div class="animation-grid">
+                <div class="animation-card">
+                    <h3>3D Model: Measuring Instruments</h3>
+                    <div class="model-container">
+                        <div class="model-3d" id="model10">
+                            <div class="loader"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>3D Model: SI Unit Relationships</h3>
+                    <div class="model-container">
+                        <div class="model-3d" id="model11">
+                            <div class="loader"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>3D Model: Dimensional Tree</h3>
+                    <div class="model-container">
+                        <div class="model-3d" id="model12">
+                            <div class="loader"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>3D Model: Error Analysis</h3>
+                    <div class="model-container">
+                        <div class="model-3d" id="model13">
+                            <div class="loader"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>3D Model: Vernier Scale</h3>
+                    <div class="model-container">
+                        <div class="model-3d" id="model14">
+                            <div class="loader"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>3D Model: Atomic Clock</h3>
+                    <div class="model-container">
+                        <div class="model-3d" id="model15">
+                            <div class="loader"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>3D Model: Parallax Measurement</h3>
+                    <div class="model-container">
+                        <div class="model-3d" id="model16">
+                            <div class="loader"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>3D Model: Unit Conversion Flow</h3>
+                    <div class="model-container">
+                        <div class="model-3d" id="model17">
+                            <div class="loader"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>3D Model: Physical Constants</h3>
+                    <div class="model-container">
+                        <div class="model-3d" id="model18">
+                            <div class="loader"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>3D Model: Measurement Scale</h3>
+                    <div class="model-container">
+                        <div class="model-3d" id="model19">
+                            <div class="loader"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>3D Model: Vector Addition</h3>
+                    <div class="model-container">
+                        <div class="model-3d" id="model20">
+                            <div class="loader"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="animation-card">
+                    <h3>3D Model: Significant Figures</h3>
+                    <div class="model-container">
+                        <div class="model-3d" id="model21">
+                            <div class="loader"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources Section -->
+        <section id="resources">
+            <h2>📚 Educational Resources</h2>
+            
+            <h3>🎥 Video Lectures</h3>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/videoseries?list=PLF797E961509B4EB5" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen></iframe>
+            </div>
+
+            <h3>🖼️ Concept Images Gallery</h3>
+            <div class="image-gallery">
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/300x250/0088ff/ffffff?text=SI+Base+Units" alt="SI Base Units">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/300x250/ff0088/ffffff?text=Vernier+Caliper" alt="Vernier Caliper">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/300x250/00ff88/000000?text=Screw+Gauge" alt="Screw Gauge">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/300x250/ff8800/ffffff?text=Dimensional+Formula" alt="Dimensional Formula">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/300x250/8800ff/ffffff?text=Error+Analysis" alt="Error Analysis">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/300x250/00ffff/000000?text=Unit+Systems" alt="Unit Systems">
+                </div>
+            </div>
+
+            <h3>📖 Quick Reference Formulas</h3>
+            <div class="animation-grid">
+                <div class="animation-card">
+                    <h3>Important Formulas</h3>
+                    <ul style="text-align: left;">
+                        <li>Velocity: v = Δx/Δt</li>
+                        <li>Acceleration: a = Δv/Δt</li>
+                        <li>Force: F = ma</li>
+                        <li>Work: W = F⋅d</li>
+                        <li>Power: P = W/t</li>
+                        <li>Density: ρ = m/V</li>
+                        <li>Pressure: P = F/A</li>
+                        <li>Energy: E = mc²</li>
+                    </ul>
+                </div>
+
+                <div class="animation-card">
+                    <h3>Conversion Factors</h3>
+                    <ul style="text-align: left;">
+                        <li>1 km = 1000 m</li>
+                        <li>1 hour = 3600 s</li>
+                        <li>1 N = 10⁵ dyne</li>
+                        <li>1 J = 10⁷ erg</li>
+                        <li>1 W = 10⁷ erg/s</li>
+                        <li>1 Pa = 10 dyne/cm²</li>
+                        <li>1 kg = 1000 g</li>
+                        <li>1 L = 10⁻³ m³</li>
+                    </ul>
+                </div>
+
+                <div class="animation-card">
+                    <h3>Physical Constants</h3>
+                    <ul style="text-align: left;">
+                        <li>c = 3×10⁸ m/s</li>
+                        <li>G = 6.67×10⁻¹¹ N⋅m²/kg²</li>
+                        <li>h = 6.626×10⁻³⁴ J⋅s</li>
+                        <li>k = 1.38×10⁻²³ J/K</li>
+                        <li>NA = 6.022×10²³ /mol</li>
+                        <li>e = 1.602×10⁻¹⁹ C</li>
+                        <li>g = 9.8 m/s²</li>
+                        <li>R = 8.314 J/(mol⋅K)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>💡 Practice Problems</h3>
+            <div class="highlight-box">
+                <h4>Problem 1: Dimensional Analysis</h4>
+                <p>The velocity v of sound waves through a medium depends on the modulus of elasticity E and density ρ. Derive the formula for velocity.</p>
+                <button class="btn" onclick="alert('Solution: v ∝ E^a × ρ^b\n[LT⁻¹] = [ML⁻¹T⁻²]^a × [ML⁻³]^b\nSolving: a = 1/2, b = -1/2\nv = k√(E/ρ)')">Show Solution</button>
+            </div>
+
+            <div class="highlight-box">
+                <h4>Problem 2: Unit Conversion</h4>
+                <p>Convert 72 km/hr into m/s.</p>
+                <button class="btn" onclick="alert('Solution:\n72 km/hr = 72 × (1000 m)/(3600 s)\n= 72 × (5/18) m/s\n= 20 m/s')">Show Solution</button>
+            </div>
+
+            <div class="highlight-box">
+                <h4>Problem 3: Significant Figures</h4>
+                <p>Calculate the area of a rectangle with length 12.5 cm and width 8.24 cm with correct significant figures.</p>
+                <button class="btn" onclick="alert('Solution:\nArea = 12.5 × 8.24 = 103.0 cm²\nSince 12.5 has 3 sig figs, answer should have 3 sig figs\nArea = 103 cm²')">Show Solution</button>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section>
+            <h2>📝 Chapter Summary</h2>
+            
+            <div class="highlight-box">
+                <h3>🎯 Key Takeaways</h3>
+                <ul>
+                    <li>✅ Physics is a quantitative science based on measurement</li>
+                    <li>✅ Seven fundamental quantities form the basis of all physical measurements</li>
+                    <li>✅ SI system provides universal standards for scientific communication</li>
+                    <li>✅ Dimensional analysis is a powerful tool for checking equations and deriving relationships</li>
+                    <li>✅ Proper error analysis and significant figures ensure measurement accuracy</li>
+                    <li>✅ Understanding units and dimensions is crucial for all physics calculations</li>
+                </ul>
+            </div>
+
+            <div class="formula-box">
+                <h3>🌟 Remember!</h3>
+                <p>"Measurement is the first step towards control and improvement. If you can't measure something, you can't understand it, and if you can't understand it, you can't improve it."</p>
+                <p><em>- Lord Kelvin</em></p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <h3>🌟 Thank You for Exploring! 🌟</h3>
+        <p>💻 <strong>Project Created By:</strong> Laxman</p>
+        <p>👨‍🎓 <strong>Student:</strong> Laxman</p>
+        <p>📖 <strong>Subject:</strong> Physics - Class 11 | <strong>Chapter:</strong> Units and Measurement</p>
+        <p style="margin-top: 2rem; color: #00ffff;">
+            © 2024 Physics Explorer | All Rights Reserved<br>
+            Made with ❤️ and ⚛️ for Physics Education
+        </p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Generate Stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Progress Bar
+        window.addEventListener('scroll', () => {
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+
+            // Parallax Effect for Planets
+            const planets = document.querySelectorAll('.parallax-planet');
+            planets.forEach((planet, index) => {
+                const speed = (index + 1) * 0.5;
+                const yPos = -(window.scrollY * speed / 100);
+                planet.style.transform = `translateY(${yPos}px) rotate(${window.scrollY * 0.1}deg)`;
+            });
+        });
+
+        // Counter Animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 2000;
+                const step = target / (duration / 16);
+                let current = 0;
+
+                const timer = setInterval(() => {
+                    current += step;
+                    if (current >= target) {
+                        counter.textContent = target;
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current);
+                    }
+                }, 16);
+            });
+        }
+
+        // Intersection Observer for Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections and cards
+        document.querySelectorAll('section, .animation-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(50px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Initialize
+        window.addEventListener('load', () => {
+            createStars();
+            setTimeout(animateCounters, 500);
+        });
+
+        // Animation Card Interactions
+        document.querySelectorAll('.animation-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.borderColor = '#ff00ff';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.borderColor = '#00ffff';
+            });
+        });
+
+        // Add ripple effect to buttons
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Console message
+        console.log('%c⚛️ Physics Explorer - Created by Laxman ⚛️', 
+                   'color: #00ffff; font-size: 20px; font-weight: bold;');
+        console.log('%cProject by: Laxman', 
+                   'color: #ff00ff; font-size: 14px;');
+    </script>
+</body>
+</html>
